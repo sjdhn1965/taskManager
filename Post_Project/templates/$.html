@@ -1,0 +1,37 @@
+$.ajax({
+
+        type: 'POST',
+
+        url: "",
+
+        data: {
+         
+          'completed': true,
+          'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken').val()
+        },
+
+        success: function (data) {
+          alert('Successfull');
+        }
+      });
+
+      onclick="SomeDeleteRowFunction(this)
+
+      
+    
+        //no clue what to put here?
+        var id = $('input[type=hidden]', $(this).closest("td")).val();
+        alert(id)
+        var p = o.parentNode.parentNode;
+        p.parentNode.removeChild(p);
+  
+        var CSRFtoken = $('input[name=csrfmiddlewaretoken]').val();
+  
+  
+  
+  
+  
+  
+  
+  
+      }
