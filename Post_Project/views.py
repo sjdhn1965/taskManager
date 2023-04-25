@@ -1,5 +1,7 @@
 from django.http import HttpResponse
 import requests
+import bcrypt
+
 
 from django.shortcuts import render
 from Post_Project.forms import Loginform
@@ -51,13 +53,19 @@ def submit__signup_form(request):
 
             email = request.POST.get("email")
             password = request.POST.get("password")
+            # encrpt the password 
+            b = password.encode('utf-8')
+            hashed_password = bcrypt.hashpw(b,bcrypt.gensalt())
+            print(hashed_password)
+
+
             datecreated = datetime.now()
 
             sql = ("INSERT INTO users"
                    "(firstname,email,password,datetcreated) "
                    "VALUES (%s,%s,%s,%s)")
             table1 = 'users'
-            data = (fname, email, password, datecreated)
+            data = (fname, email, hashed_password, datecreated)
             print(data)
 
             cursor.execute(sql, data)
@@ -75,38 +83,55 @@ def submit__signup_form(request):
 
 
 def login_form(request):
+
     message = "Login here!"
+    form = Loginform(request.POST or None)
     if request.method == 'POST':
-        
-        # connect to database
-        mydb = db.connect(host="localhost", user="root",
-                          passwd="bismi7867", database="members")
-        cursor = mydb.cursor()
-
-        email = request.POST["email"]
-        password = request.POST["password"]
-        sql = "SELECT email,password FROM users WHERE email = %s"
-        print(f'email:', email)
-        data = (email)
-        cursor.execute(sql, (data,))
-        result = cursor.fetchone()
-
-        if result is not None:
-            pass
-            if result[1] == password:
-                print("logged in")
-                request.session["user"] = email
-                user = request.session["user"]
-
-                # return render(request, "blogpost_page.html", {'email':request.session["email"]})
-                return redirect("/task/")
-                # return render(request, "blogpost_page.html", {'email':request.session["email"]})
-            else:
-                message = "Invalid password!"
+        form = Loginform(request.POST or None)
+        if not form.is_valid():
+            #print userform.errors
+            message = form.errors
+            return render(request, "login_page.html",{'form': form,'message':message})
         else:
-            message = "Invalid username!"
-    userform = Loginform()
-    return render(request, "login_page.html", {'form': userform,'message':message})
+        # connect to database
+            mydb = db.connect(host="localhost", user="root",
+                          passwd="bismi7867", database="members")
+            cursor = mydb.cursor()
+
+            # email = request.POST["email"]
+            # password = request.POST["password"]
+            email = form.cleaned_data.get("email")
+            password = form.cleaned_data.get("password")
+        
+            sql = "SELECT email,password FROM users WHERE email = %s"
+            print(f'email:', email)
+            data = (email)
+            cursor.execute(sql, (data,))
+            result = cursor.fetchone()
+        
+            
+            if result is not None:
+                pass
+                if  bcrypt.checkpw(password.encode('utf-8'),result[1].encode('utf-8')):
+                    print("logged in")
+                    request.session["user"] = email
+                    user = request.session["user"]
+                    return redirect("/task/")
+                else:
+                    message = "Invalid password!"
+                    return render(request, "login_page.html",{'form': form,'message':message})
+            else:
+                message = "Invalid username!"
+                return render(request, "login_page.html",{'form': form,'message':message})
+    # userform =  Loginform(request.POST or None)      
+    # if userform.is_valid():
+    #     password= userform.cleaned_data.get("password")
+    #     email= userform.cleaned_data.get("email")
+    #     context = {'form':userform,'email':email,'password':password}
+
+    
+    else:
+        return render(request, "login_page.html", {'form':form,'message':message})
 
 
 def taskform(request):
