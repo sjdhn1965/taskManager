@@ -1,6 +1,9 @@
 from django.http import HttpResponse
 import requests
 import bcrypt
+import settings
+from values import dbvalues
+
 
 
 from django.shortcuts import render
@@ -13,21 +16,23 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.contrib.auth import logout as auth_logout
 
-global user
-
+global user, firstname
+dv = dbvalues.setValues
 
 def taskpage(request):
-
+    
     # print("Session of {}".format(request.session['user']))
-     return render(request, "taskdisplay.html", {"user": "Welcome " + request.session["user"]})
+    return render(request, "taskdisplay.html", {"user": "Welcome " + request.session["email"]})
 
 
 def submit__signup_form(request):
-    message = "Sign up here!" 
+    message = "Sign up here!"
     if request.method == 'POST':
         # connect to database
-        mydb = db.connect(host="localhost", user="root",
-                          passwd="bismi7867", database="members")
+        
+        
+        mydb = db.connect(host=dv['dbHost'],user=['dbUsernam'],
+                      passwd=dv['dbPassword'], database=['dbName'])
         cursor = mydb.cursor()
 
         email = request.POST.get("email")
@@ -45,19 +50,20 @@ def submit__signup_form(request):
 
         if result:
             message = "User already exists!"
-            return render(request, "signup_page.html", {'message':message})
+            return render(request, "signup_page.html", {'message': message})
 
         else:
 
-            fname = request.POST.get("firstname")
+            firstname = request.POST.get("firstname")
 
             email = request.POST.get("email")
             password = request.POST.get("password")
-            # encrpt the password 
+            # encrpt the password
             b = password.encode('utf-8')
-            hashed_password = bcrypt.hashpw(b,bcrypt.gensalt())
-            print(hashed_password)
+            hashed_password = bcrypt.hashpw(
+                b, bcrypt.gensalt()).decode('utf-8')
 
+            print(hashed_password)
 
             datecreated = datetime.now()
 
@@ -65,109 +71,105 @@ def submit__signup_form(request):
                    "(firstname,email,password,datetcreated) "
                    "VALUES (%s,%s,%s,%s)")
             table1 = 'users'
-            data = (fname, email, hashed_password, datecreated)
+            data = (firstname, email, hashed_password, datecreated)
             print(data)
 
             cursor.execute(sql, data)
 
             mydb.commit()
-            
+
             mydb.close()
+            request.session['firstname'] = firstname
 
-            request.session['user'] = email
-            user = request.session['user']
-            # return HttpResponseRedirect("/taskpage")
-            return render(request, "taskdisplay.html", {'user': user})
+            request.session['email'] = email
 
-    return render(request, "signup_page.html", {'action': 'Sign UP!'})
+            return render(request, "taskdisplay.html")
+
+    return render(request, "signup_page.html")
 
 
 def login_form(request):
 
     message = "Login here!"
-    form = Loginform(request.POST or None)
+    form = Loginform()
     if request.method == 'POST':
         form = Loginform(request.POST or None)
         if not form.is_valid():
-            #print userform.errors
+            # print userform.errors
             message = form.errors
-            return render(request, "login_page.html",{'form': form,'message':message})
+            return render(request, "login_page.html", {'form': form, 'message': message})
         else:
-        # connect to database
-            mydb = db.connect(host="localhost", user="root",
-                          passwd="bismi7867", database="members")
+            # connect to database
+            mydb = db.connect(host=dv['dbHost'],user=['dbUsernam'],
+                      passwd=dv['dbPassword'], database=['dbName'])
             cursor = mydb.cursor()
 
             # email = request.POST["email"]
             # password = request.POST["password"]
             email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
-        
-            sql = "SELECT email,password FROM users WHERE email = %s"
+
+            sql = "SELECT firstname,email,password FROM users WHERE email = %s"
             print(f'email:', email)
             data = (email)
             cursor.execute(sql, (data,))
             result = cursor.fetchone()
-        
-            
+
             if result is not None:
                 pass
-                if  bcrypt.checkpw(password.encode('utf-8'),result[1].encode('utf-8')):
+                if bcrypt.checkpw(password.encode('utf-8'), result[2].encode('utf-8')):
+                    print("my password", password.encode('utf-8'))
+                    print("my db password", result[2].encode('utf-8'))
                     print("logged in")
-                    request.session["user"] = email
-                    user = request.session["user"]
+                    request.session["firstname"] = result[0]
+                    request.session["email"] = result[1]
                     return redirect("/task/")
+
                 else:
                     message = "Invalid password!"
-                    return render(request, "login_page.html",{'form': form,'message':message})
+                    return render(request, "login_page.html", {'form': form, 'message': message})
             else:
                 message = "Invalid username!"
-                return render(request, "login_page.html",{'form': form,'message':message})
-    # userform =  Loginform(request.POST or None)      
-    # if userform.is_valid():
-    #     password= userform.cleaned_data.get("password")
-    #     email= userform.cleaned_data.get("email")
-    #     context = {'form':userform,'email':email,'password':password}
+                return render(request, "login_page.html", {'form': form, 'message': message})
 
-    
     else:
-        return render(request, "login_page.html", {'form':form,'message':message})
+        return render(request, "login_page.html", {'form': form, 'message': message})
 
 
 def taskform(request):
+
+    if not 'email' in request.session:
+         return redirect("/login/")
     
-    if 'user' in request.session:
-        
-        print("inside of function task")
-    else:
-       return redirect("/login/")
+    
+       
 
     data = []
 
     if 'AddTask' in request.POST:
-        
+
         task = request.POST["task1"]
         dt = datetime.today()
-        email = request.session["user"]
+        email = request.session["email"]
         status = 0
-        print ("from inside taskform ",task,dt,email)
-     # Add task to table *task
-        mydb = db.connect(host="localhost", user="root",
-                          passwd="bismi7867", database="members")
+        print("from inside taskform ", task, dt, email)
+    # Add task to table *task
+         
+        mydb = db.connect(host=dv['dbHost'],user=['dbUsernam'],
+                      passwd=dv['dbPassword'], database=['dbName'])
         cursor = mydb.cursor()
         sql = ("INSERT INTO task"
-                   "(email,task,datecreated,status1) "
-                   "VALUES (%s,%s,%s,%s)")
+               "(email,task,datecreated,status1) "
+               "VALUES (%s,%s,%s,%s)")
         table1 = 'task'
         Insertdata = (email, task, dt, False)
 
         cursor.execute(sql, Insertdata)
         mydb.commit()
         mydb.close()
-
-    
-    user = request.session["user"]
-    return render(request, "taskdisplay.html", {'user': user})
+        return redirect('/task/')
+    else:
+        return render(request, "taskdisplay.html")
 
 
 def updateform(request):
@@ -176,93 +178,102 @@ def updateform(request):
 
 
 def viewtask(request):
-        if 'user' in request.session:
-                print("inside of function task")
-        else:
-                return redirect("/login/")
+    if 'email' in request.session:
+        print("inside of function task")
+    else:
+        return redirect("/login/")
 
-        data = []
+    data = []
 
-        email = request.session["user"]
-        print("email", email)
+    email = request.session["email"]
+    print("email", email)
 
-        status = int(request.POST["status"])
-        if status == 1:
-         status = 0
-        else:
-         status=1
-        
-        print('status from viewtask', status)
-                       
-        #view task to table *task
-        mydb = db.connect(host="localhost", user="root",
-                            passwd="bismi7867", database="members")
-        sql = ("SELECT email,task,datecreated,status1,taskid FROM task where email=%s AND status1 =%s")
-        cursor = mydb.cursor()
-        cursor.execute(sql, (email,status))
-        result = cursor.fetchall()
-        if result is None:
-                pass
-        else:
-                for result in result:
-                    dt = result[2].strftime('%a %d,%Y')
-                    onetask = {'task':result[1],'dt':dt,'status':result[3],'taskid':result[4]}
-                    
-                    data.append(onetask)
-                    
+    status = int(request.POST["status"])
+    if status == 1:
+        status = 0
+    else:
+        status = 1
 
-        mydb.close
-        
-        context = {'context':data}
-              
-        html = render_to_string( "viewdata.html", context)
-           
-        return JsonResponse(html, safe=False)
-            #return render(request, "taskdisplay.html",context=context)
-        
+    print('status from viewtask', status)
+
+    # view task to table *task
    
+    
+
+
+     
+    mydb = db.connect(host=dv['dbHost'],user=['dbUsernam'],
+                      passwd=dv['dbPassword'], database=['dbName'])
+    sql = ("SELECT email,task,datecreated,status1,taskid FROM task where email=%s AND status1 =%s")
+    cursor = mydb.cursor()
+    cursor.execute(sql, (email, status))
+    result = cursor.fetchall()
+    if result is None:
+        pass
+    else:
+        for result in result:
+            dt = result[2].strftime('%a %d,%Y')
+            onetask = {'task': result[1], 'dt': dt,
+                       'status': result[3], 'taskid': result[4]}
+
+            data.append(onetask)
+
+    mydb.close
+
+    context = {'context': data}
+
+    html = render_to_string("viewdata.html", context)
+
+    return JsonResponse(html, safe=False)
+
 
 def movetask(request):
-    if 'user' in request.session:
-                pass
+    if 'email' in request.session:
+        pass
     else:
-            return redirect("/login/")
-    
+        return redirect("/login/")
+
     print("inside of movetask")
-    data=[]
+    data = []
     taskid = request.POST.get("tid")
-    email = request.session["user"]
+    email = request.session["email"]
     status = int(request.POST.get("status"))
-    print("status from movetask" , status)  
-    print(type(status))   
+    print("status from movetask", status)
+    print(type(status))
     taskid = int(taskid)
     print(taskid)
     print(type(taskid))
-           
-           
-    sql = "UPDATE TASK SET status1 = %s where taskid = %s"
-    deldata = (status,taskid)
+
+    sql = "UPDATE task SET status1 = %s where taskid = %s"
+    deldata = (status, taskid)
     print('deldata', deldata)
-    mydb = db.connect(host="localhost", user="root",
-                            passwd="bismi7867", database="members")
+     
+    mydb = db.connect(host=dv['dbHost'],user=['dbUsernam'],
+                      passwd=dv['dbPassword'], database=['dbName'])
     cursor = mydb.cursor()
-    cursor.execute(sql,deldata)
+    cursor.execute(sql, deldata)
     mydb.commit()
-           
-    mydb.close 
-    
+
+    mydb.close
 
     return viewtask(request)
 
+
 def logout(request):
-    auth_logout(request)
-   # request.session.clear()
-    print("logged out")
+    if "firstname" in request.session:
+        del request.session["firstname"]
     
+    if "email" in request.session:
+        del request.session["email"]
     
-    return JsonResponse({'form': 'success'})
-              
-                
-        
-       
-       
+    request.session.clear()
+    
+    return redirect('/login/')
+    #return JsonResponse({'form': 'success'})
+
+   
+    
+
+   
+
+    
