@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,21 +14,22 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
+  
+<style>
 
-  <script>
- 
 
-  </script>
-<style>.head {
-margin-top: 120px;
-}</style>
+</style>
 
 </head>
-<h4> {{user}}</h4>
+
 <body>
 
-  <table class="table table-hover  table-bordered table-danger table-striped" id="tablaNorma">
-    <thead class="head bg-light" >
+
+  <div class="container-fluid">
+
+  <table class="table table-hover" id="tablaNorma">
+    <thead class="card-body">
       <tr>
 
         <th scope="col"></th>
@@ -44,7 +46,7 @@ margin-top: 120px;
            
         <tr>
           
-          <td>
+          <td >
             {%if task.status == 1 %} 
             
                 <input type="checkbox" value={{task.taskid}} id="checkbox1" checked>
@@ -54,7 +56,7 @@ margin-top: 120px;
             {%if task.status == 0 %}
                 
 
-            <input type="checkbox" value={{task.taskid}} id="checkbox2">
+            <input type="checkbox"  value={{task.taskid}} id="checkbox2">
                 
              
                
@@ -63,8 +65,8 @@ margin-top: 120px;
             <input type="hidden" name="status" value={{task.status}}>
             <input type="hidden" id="taskid1" class="chk" value={{task.taskid}}>
           </td>
-          <td><span>{{task.task}}<span></td>
-          <td><span>{{task.dt}}</span></td>
+          <td><span class="data">{{task.task}}<span></td>
+          <td><span class="data">{{task.dt}}</span></td>
           
         </tr>
 
@@ -83,7 +85,7 @@ margin-top: 120px;
     ele[i].checked = true;
   }</script> -->
 
-
+  
 </body>
 
 </html>

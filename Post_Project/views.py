@@ -1,9 +1,7 @@
 from django.http import HttpResponse
 import requests
 import bcrypt
-import settings
-from values import dbvalues
-
+from .values import dbvalues
 
 
 from django.shortcuts import render
@@ -17,7 +15,8 @@ from django.template.loader import render_to_string
 from django.contrib.auth import logout as auth_logout
 
 global user, firstname
-dv = dbvalues.setValues
+dv = dbvalues.setValues()
+print('dv ',dv)
 
 def taskpage(request):
     
@@ -31,8 +30,8 @@ def submit__signup_form(request):
         # connect to database
         
         
-        mydb = db.connect(host=dv['dbHost'],user=['dbUsernam'],
-                      passwd=dv['dbPassword'], database=['dbName'])
+        mydb = db.connect(host=dv['dbHost'],user=dv['dbUsername'],
+                      passwd=dv['dbPassword'], database=dv['dbName'],port=dv['dbPort'])
         cursor = mydb.cursor()
 
         email = request.POST.get("email")
@@ -100,8 +99,9 @@ def login_form(request):
             return render(request, "login_page.html", {'form': form, 'message': message})
         else:
             # connect to database
-            mydb = db.connect(host=dv['dbHost'],user=['dbUsernam'],
-                      passwd=dv['dbPassword'], database=['dbName'])
+            mydb = db.connect(host=dv['dbHost'],user=dv['dbUsername'],passwd=dv['dbPassword'], database=dv['dbName'])
+                              
+                      
             cursor = mydb.cursor()
 
             # email = request.POST["email"]
@@ -155,8 +155,9 @@ def taskform(request):
         print("from inside taskform ", task, dt, email)
     # Add task to table *task
          
-        mydb = db.connect(host=dv['dbHost'],user=['dbUsernam'],
-                      passwd=dv['dbPassword'], database=['dbName'])
+        mydb = db.connect(host=dv['dbHost'],user=dv['dbUsername'],
+                      passwd=dv['dbPassword'], database=dv['dbName'])
+        
         cursor = mydb.cursor()
         sql = ("INSERT INTO task"
                "(email,task,datecreated,status1) "
@@ -202,8 +203,8 @@ def viewtask(request):
 
 
      
-    mydb = db.connect(host=dv['dbHost'],user=['dbUsernam'],
-                      passwd=dv['dbPassword'], database=['dbName'])
+    mydb = db.connect(host=dv['dbHost'],user=dv['dbUsername'],
+                      passwd=dv['dbPassword'], database=dv['dbName'])
     sql = ("SELECT email,task,datecreated,status1,taskid FROM task where email=%s AND status1 =%s")
     cursor = mydb.cursor()
     cursor.execute(sql, (email, status))
@@ -248,8 +249,8 @@ def movetask(request):
     deldata = (status, taskid)
     print('deldata', deldata)
      
-    mydb = db.connect(host=dv['dbHost'],user=['dbUsernam'],
-                      passwd=dv['dbPassword'], database=['dbName'])
+    mydb = db.connect(host=dv['dbHost'],user=dv['dbUsername'],
+                      passwd=dv['dbPassword'], database=dv['dbName'])
     cursor = mydb.cursor()
     cursor.execute(sql, deldata)
     mydb.commit()

@@ -1,4 +1,7 @@
+{% extends "master.html" %}
 {% load static %}
+
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -12,223 +15,12 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
   <title>Buckket List</title>
 
 
-  <style>
- html {
-  height: 100%;
-  /* overflow: hidden; */
-}
-html body {
-  height: 100%;
-  font-size: small;
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
  
-}
-html body .container-fluid.body-content {
-  position: absolute;
-  top: 50px;
-  bottom: 30px;
-  right: 0;
-  left: 0;
-  overflow-y: auto;
-}
-header {
-    position:fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    background-color: rgb(147, 109, 204);
-    height: 50px;
-}
 
-.main{
-  margin-top:50px;
-  margin-left:0px;
-  margin-right: 0px;
-  margin-bottom:20px;
-  border-radius:0%;
-  
-}
-.div_data {
-  margin-bottom: 10px;
-}
-.input-text {
-  border-radius: 0%;
-}
-.card-body {
-  margin-top: 120px;
-
-}
-/* footer {
-    position;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #4C4;
-    height: 30px;
-
-} */
-  </style>
-  <script>
-    $(document).on("click", "#pending", function (o) {
-      //Serialize Form
-      o.preventDefault()
-      var myData = $('#taskform').serialize();
-
-
-
-
-      var status = 1
-
-      myData = myData; //You could get this from a hidden field perhaps.
-
-      $.ajax({
-        type: "POST",
-        url: "/viewtask/",
-        data: {
-          'status': status,
-          'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
-        },
-        success: function (response) {
-          $(".card-body").html(response);
-        }
-      });
-
-    });
-
-    $(document).on("click", "#logout", function (o) {
-      $.ajax({
-
-        url: "/logout/",
-        success: function (response) {
-          // $("html").html(response);
-          window.location.href = '/login/';
-        }
-      });
-
-
-    });
-
-
-    $(document).on("click", "#complist", function (o) {
-      //Serialize Form
-      o.preventDefault()
-      var myData = $('#taskform').serialize();
-
-
-      //Append custom value
-
-      var status = 0
-
-      myData = myData; //You could get this from a hidden field perhaps.
-
-      $.ajax({
-        type: "POST",
-        url: "/viewtask/",
-        data: {
-          'status': status,
-          'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
-        },
-        success: function (response) {
-          $(".card-body").html(response);
-        }
-
-      });
-
-
-
-
-    });
-
-
-    // $(document).on("change", "#checkbox2", function () {
-    //   // if ($('input[name="checkbox2"]').is(':checked')){
-    //   var tid = ($(this).closest('tr').find('#taskid1').val());
-    //   $('td input:checked').closest('tr').remove();
-
-    //   var stat = 0;
-    //   move_task(stat, tid);
-    // });
-    $(document).on("change", "#checkbox2", function () {
-      var myData = $('#movetask').serialize();
-
-      var tid = $(this).closest('tr').find('#taskid1').val();
-      $("#tablaNorma input[type='checkbox']:checked").closest("tr").remove();
-      //alert(tid)
-      //Append custom value
-      // $('td input:checked').closest('tr').remove();
-      // myData = myData + "&var1=" + "movetask" + "&var2=" + tid; //You could get this from a hidden field perhaps.
-      var status = 1;
-      $.ajax({
-        type: "POST",
-        url: "/movetask/",
-        data: {
-          'tid': tid,
-          'status': status,
-          'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
-        },
-        datatype: "html",
-        success: function (response) {
-          $(".card-body").html(response);
-        }
-      });
-    });
-    // $(document).on("change", "#checkbox2", function () {
-    //Serialize Form
-    $(document).on("change", "#checkbox2", function () {
-      var myData = $('#movetask').serialize();
-
-      var tid = $(this).closest('tr').find('#taskid1').val();
-      $("#tablaNorma input[type='checkbox']:checked").closest("tr").remove();
-      //alert(tid)
-      //Append custom value
-      // $('td input:checked').closest('tr').remove();
-      // myData = myData + "&var1=" + "movetask" + "&var2=" + tid; //You could get this from a hidden field perhaps.
-      var status = 1;
-      $.ajax({
-        type: "POST",
-        url: "/movetask/",
-        data: {
-          'tid': tid,
-          'status': status,
-          'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
-        },
-        datatype: "html",
-        success: function (response) {
-          $(".card-body").html(response);
-        }
-      });
-
-    });
-    $(document).on("change", "#checkbox1", function () {
-      var myData = $('#movetask').serialize();
-
-      var tid = $(this).closest('tr').find('#taskid1').val();
-      $(this).closest("tr").remove();
-      //alert(tid)
-      //Append custom value
-      // $('td input:checked').closest('tr').remove();
-      // myData = myData + "&var1=" + "movetask" + "&var2=" + tid; //You could get this from a hidden field perhaps.
-      var status = 0;
-      $.ajax({
-        type: "POST",
-        url: "/movetask/",
-        data: {
-          'tid': tid,
-          'status': status,
-          'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
-        },
-        datatype: "html",
-        success: function (response) {
-          $(".card-body").html(response);
-        }
-      });
-
-    });
-  </script>
 
 
 
@@ -246,50 +38,13 @@ header {
 </head>
 
 <body>
-  <header>
-
-    <span>
-      <h5> {{"Hi "}}{{user}}</h5>
-    </span>
-  </header>
   
-
-  <div class="container">
-
-
-    <form method="post" action="{% url 'taskform' %}" name="taskform" id="movetask">
-      {%csrf_token%}
-
-
-      <div class="main fixed-top border border-primary bg-black">
-        <div class="div_data">
-
-          <input type="text" name="task1" class="input-text form-control border-0 bg-light" placeholder="enter your task.." aria-label="task1"
-            aria-describedby="basic-addon1"  maxlength="50" pattern = "([^\s][A-zÀ-ž\s]+)" title="Letters & space only" required>
-        </div>
-
-        <div class="div_data container">
-          <button type="submit" class="btn btn-danger btn-xs" name="AddTask">Add</button>
-          <button type="submit" class="btn btn-info btn-xs" value="0" id="pending">Tasks &#x274C;</button>
-          <input type="hidden" name="pending" value="Pending">
-          <button type="submit" class="btn btn-success btn-xs" value="1" id="complist">Tasks &#x270C;</button>
-          <button type="submit" class="btn btn-warning btn-xs" value="1" id="logout">Logout</button>
-        </div>
-
-      </div>
-
-    </form>
-
-  </div>
-
-  <div class="card-body">
-
-
-  </div>
-
-
+ 
+  
+ 
 
   <footer></footer>
+ 
 </body>
 
 </html>

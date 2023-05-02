@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-sxma2vy%q979b7ab(uoch$=9**2=43x&qoq9ac*s359&gtmqs7
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'http://dbjango-env.eba-n7ykutfr.ap-south-1.elasticbeanstalk.com/']
+    'localhost']
 
 
 # Application definition
@@ -91,14 +91,24 @@ WSGI_APPLICATION = 'Post_Project.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'DBNAME': env('DBNAME'),
+#         'DBUSER': env('DBUSER'),
+#         'DBPASS':env('DBPASS'),
+#         'DBHOST':env('DBHOST'),
+#         'DBPORT': env('DBPORT'),
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': env('DBNAME'),
-        'USER': env('USER'),
-        'PASSWORD':env('DBPASS'),
-        'HOST':env('HOST'),
-        'PORT': env('PORT'),
+        'USER': env('DBUSER'),
+        'PASSWORD': env('DBPASS'),
+        'HOST': env('DBHOST'),
+        'PORT':  env('DBPORT'),
     }
 }
 
