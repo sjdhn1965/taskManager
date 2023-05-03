@@ -18,10 +18,12 @@ html body .container-fluid.body-content {
   bottom: 0px;
   right: 0;
   left: 0;
-  overflow-y: auto;
+  overflow-y: scroll;
+  
   
   
 }
+
 
 header {
   position: fixed;
@@ -53,7 +55,7 @@ header {
   margin-left: 0px;
   margin-right: 0px;
   margin-bottom: 20px;
-  border-radius: 0%;
+  
 
 }
 
@@ -64,14 +66,14 @@ header {
 
 .input-text  {
   font-family:Verdana, Geneva, Tahoma, sans-serif;
-  border-radius: 0%;
-  font-size: 5.0vw;
-  color:black;
-  font-weight: 300;
+ 
+  font-size: 12px;
+  color:rgb(76, 5, 210);
+  font-weight: 200;
 
 }
 .data {
-    font-size: 4.0vw;
+    font-size: 12px;
   }
  
 

@@ -18,6 +18,18 @@ global user, firstname
 dv = dbvalues.setValues()
 print('dv ',dv)
 
+def setcookie(request):
+    response = HttpResponse("Cookies set")
+    response.set_cookie(name="mycookie",max_age=87878)
+    response.set_cookie('java-tutorial', 'javatpoint.com') 
+
+def getcookie(request):  
+    tutorial  = request.COOKIES['java-tutorial']  
+    return HttpResponse("java tutorials @: "+  tutorial);  
+
+
+
+
 def taskpage(request):
     
     # print("Session of {}".format(request.session['user']))
@@ -199,10 +211,6 @@ def viewtask(request):
 
     # view task to table *task
    
-    
-
-
-     
     mydb = db.connect(host=dv['dbHost'],user=dv['dbUsername'],
                       passwd=dv['dbPassword'], database=dv['dbName'])
     sql = ("SELECT email,task,datecreated,status1,taskid FROM task where email=%s AND status1 =%s")
@@ -222,8 +230,10 @@ def viewtask(request):
     mydb.close
 
     context = {'context': data}
-
-    html = render_to_string("viewdata.html", context)
+    print('context:',context)
+    html = render_to_string("viewdata.html", context=context,request=request)
+    
+    print("html",html)
 
     return JsonResponse(html, safe=False)
 

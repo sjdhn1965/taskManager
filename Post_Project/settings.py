@@ -29,8 +29,7 @@ SECRET_KEY = 'django-insecure-sxma2vy%q979b7ab(uoch$=9**2=43x&qoq9ac*s359&gtmqs7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'localhost']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -57,6 +56,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     SESSION_COOKIE_HTTPONLY = True
+     SESSION_COOKIE_SECURE = True
+     
 ]
 
 ROOT_URLCONF = 'Post_Project.urls'
