@@ -56,9 +56,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-     SESSION_COOKIE_HTTPONLY = True
-     SESSION_COOKIE_SECURE = True
-     
+    
+
 ]
 
 ROOT_URLCONF = 'Post_Project.urls'

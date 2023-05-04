@@ -1,214 +1,30 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
-  <title>Bucket Lists</title>
-
-  <script>
-    $(document).on("click", "#pending", function (o) {
-      alert("penlist")
-      o.preventDefault()
-      var status = 1
-      
-      $.ajax({
-        type: "POST",
-        url: "/viewtask/",
-        data: {
-          'status': status,
-          'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
-        },
-        success: function (response) {
-          alert(response)
-          console.log("success", response);
-         
-          $('#taskData').find(".card-body").html(response);
-        },
-        error: function (xhr, textStatus, errorThrown) {
-            // handle error response from server, if necessary
-            console.log("error", textStatus);
-          }
-      });
-
-    });
-
-    $(document).on("click", "#logout", function (o) {
-      $.ajax({
-
-        url: "/logout/",
-        success: function (response) {
-          // $("html").html(response);
-          window.location.href = '/login/';
-        },
-        
-      });
-
-
-    });
-    var buttons = document.querySelectorAll('.btn')
-
-    $(document).on("click", "#complist", function (o) {
-      //Serialize Form
-      alert("comolist")
-      o.preventDefault()
-      var status = 0
-      $.ajax({
-        type: "POST",
-        url: "/viewtask/",
-        data: {
-          'status': status,
-          'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
-        },
-        success: function (response) {
-          $('#taskData').find(".card-body").html(response);
-        }
-
-      });
-    });
+ 
 
 
 
-    $(document).ready(function () {
-      var status = 0;
+{% block message %}
 
-      $('#myDiv').find('#checkbox1').on('click', function () {
-        if ($(this).is(':checked')) {
-          status = 0;
-          $('#taskid').val($(this).data('id'));
-          alert(id, status)
-          $(this).closest('.row').remove();
-          sendAjaxPOST(status);
-        }
-      });
+<p>copyright</p>
 
-      $('#myDiv').find('#checkbox2').on('click', function () {
-        if ($(this).is(':checked')) {
-          status = 1;
-          $('#taskid').val($(this).data('id'));
-          alert(id, status)
-          $(this).closest('.row').remove();
-          sendAjaxPOST(status);
-        }
-      });
-
-      function sendAjaxPOST(status) {
-        //var token = $('meta[name="csrf-token"]').attr('content');
-        var id = $('#taskid').val();
-        var data = {
-          status: status,
-          id: id,
-          'csrfmiddlewaretoken': $("input[name='csrfmiddlewaretoken']").val(),
-        };
-        alert(id, status)
-        $.ajax({
-          url: '\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/movetask',
-          type: 'post',
-          data: data,
-          success: function (response) {
-            // open the viewdata.html page in a new window or tab
-            var newWindow = window.open('viewdata.html');
-          },
-          error: function (xhr, textStatus, errorThrown) {
-            // handle error response from server, if necessary
-          }
-        });
-      }
-    });
-  </script>
-</head>
-
-<body>
-  <header>
-
-    <span>
-      <h5>
-
-        <span class="greeting">{{"Hi "}}{{request.session.firstname}}</span>
-
-    </span>
-  </header>
-
-
-  <div class="container-fluid">
-    <div class="row justify-content-center">
-
-      <form method="post" action="{% url 'taskform' %}" name="taskform" id="movetask">
-        {%csrf_token%}
-
-
-        <div class="main fixed-top border border-primary bg-black">
-          <div class="row div_data">
-
-            <input type="text" name="task1" class="input-text form-control border-0 bg-light"
-              placeholder="enter your task.." aria-label="task1" aria-describedby="basic-addon1" maxlength="50"
-              pattern="([^\s][A-zÀ-ž\s]+)" title="Letters & space only" required>
-          </div>
-
-          <div class="gap-0 d-grid d-md-block col-12">
-
-            <button type="submit" class="btn btn-danger btn-sm" name="AddTask">
-              Add</button>
-
-            <button type="submit" class="btn btn-info  btn-sm" value="0" id="pending">
-              Task-nc</button>
-
-            <input type="hidden" name="pending" value="Pending">
-
-            <button type="submit" class="btn btn-success btn-sm" value="1" id="complist">
-              Tasks-c
-            </button>
-            <button type="submit" class="btn btn-warning btn-sm" value="1" id="logout">
-              Logout
-            </button>
-
-
-          </div>
-      </form>
-
-
-    </div>
-
-    <!-- {% block userinfo %} -->
-  
-
-    <div class="row">
-  
-      <div class="col-2"></div>
-      <div class="col-5">List</div>
-      <div class="col-5">Date</div>
-  
-    </div>
-  
-    <div class="card-body" id="taskData">
-      <p><h1>Inside card-body</h1></p>
-    </div>
-  
-  
-    
-
-  
-<!-- {% endblock %} -->
-
-<p>Check out the two templates to see what they look like, and views.py to see the reference to the child template.</p>
-  </div>
-  
+{% endblock %}
 
 
 
-</body>
-</html>                  
 
 
-  
-</body>
 
-</html>
+ 
+
+
+
+
+
+
+
+
+
+
+

@@ -15,5 +15,8 @@ urlpatterns = [
     path('task/', views.taskform, name="taskform"),
     path('movetask/',views.movetask,name='movetask'),
     path('update/', views.updateform, name="updateform"),
-    path('logout/', views.logout, name="logout")
+    path('logout/', views.logout, name="logout"),
+    path('getcookies/',views.getcookies,name='getcookies'),
+    path('setcookies/',views.setcookies,name='setcookies'),
+    path('viewd/', views.viewd, name="viewdata"),
    ]

@@ -8,36 +8,22 @@ html {
 html body {
   height: 100%;
   font-size: small;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-family:Georgia, 'Times New Roman', Times, serif
 
 }
 
-html body .container-fluid.body-content {
- 
-  top: 0px;
-  bottom: 0px;
-  right: 0;
-  left: 0;
-  overflow-y: scroll;
+
   
   
   
-}
 
 
-header {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  background-color: rgb(147, 109, 204);
-  height: 20%;
 
-}
+
 
 
 .greeting {
-  color: rgb(246, 240, 240);
+  color: rgb(244, 7, 7);
   
   vertical-align:middle;
   margin-left: 20px;
@@ -50,19 +36,9 @@ header {
 
 
 
-.main {
-  margin-top: 50px;
-  margin-left: 0px;
-  margin-right: 0px;
-  margin-bottom: 20px;
-  
 
-}
 
-.div_data {
-  margin-left: 0px;
 
-}
 
 .input-text  {
   font-family:Verdana, Geneva, Tahoma, sans-serif;
@@ -72,10 +48,7 @@ header {
   font-weight: 200;
 
 }
-.data {
-    font-size: 12px;
-  }
- 
+
 
 
 

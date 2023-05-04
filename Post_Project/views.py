@@ -18,14 +18,17 @@ global user, firstname
 dv = dbvalues.setValues()
 print('dv ',dv)
 
-def setcookie(request):
+def setcookies(request):
     response = HttpResponse("Cookies set")
-    response.set_cookie(name="mycookie",max_age=87878)
+    response.set_cookie("mycookie",max_age=87878)
     response.set_cookie('java-tutorial', 'javatpoint.com') 
+    response.set_cookie('python-tutorial', 'pythontpoint.com') 
+    return response
 
-def getcookie(request):  
+def getcookies(request):  
     tutorial  = request.COOKIES['java-tutorial']  
-    return HttpResponse("java tutorials @: "+  tutorial);  
+    tutorial = request.COOKIES['python-tutorial']
+    return HttpResponse("java tutorials @: "+ tutorial  );  
 
 
 
@@ -91,7 +94,7 @@ def submit__signup_form(request):
 
             mydb.close()
             request.session['firstname'] = firstname
-
+            user =  request.session["firstname"]
             request.session['email'] = email
 
             return render(request, "taskdisplay.html")
@@ -135,6 +138,7 @@ def login_form(request):
                     print("logged in")
                     request.session["firstname"] = result[0]
                     request.session["email"] = result[1]
+                    user =  request.session["firstname"]
                     return redirect("/task/")
 
                 else:
@@ -230,12 +234,15 @@ def viewtask(request):
     mydb.close
 
     context = {'context': data}
-    print('context:',context)
+    #print('context:',context)
     html = render_to_string("viewdata.html", context=context,request=request)
     
-    print("html",html)
-
-    return JsonResponse(html, safe=False)
+   
+    
+    print(JsonResponse(context))
+     
+    return JsonResponse(context)
+    
 
 
 def movetask(request):
@@ -246,7 +253,7 @@ def movetask(request):
 
     print("inside of movetask")
     data = []
-    taskid = request.POST.get("tid")
+    taskid = request.POST.get("id")
     email = request.session["email"]
     status = int(request.POST.get("status"))
     print("status from movetask", status)
@@ -281,6 +288,11 @@ def logout(request):
     
     return redirect('/login/')
     #return JsonResponse({'form': 'success'})
+
+ 
+ 
+def viewd(request):
+    return redirect('view.html')
 
    
     

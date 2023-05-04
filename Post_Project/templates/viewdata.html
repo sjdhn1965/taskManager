@@ -1,6 +1,7 @@
 <!-- {% extends "master.html" %} -->
-
+{% load static %}
 <form method="post" action="{% url 'movetask' %}" name="movetask" id="movetask">
+  {%csrf_token%}
   <H1>INSIDE CONTEXT LOOP</H1>
   {%for task in context%}
    
