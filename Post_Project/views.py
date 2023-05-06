@@ -10,6 +10,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 import mysql.connector as db
 from datetime import datetime
+from datetime import timedelta
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.contrib.auth import logout as auth_logout
@@ -63,7 +64,7 @@ def submit__signup_form(request):
         print(result)
 
         if result:
-            message = "User already exists!"
+            message = "Star already registered!"
             return render(request, "signup_page.html", {'message': message})
 
         else:
@@ -72,7 +73,9 @@ def submit__signup_form(request):
 
             email = request.POST.get("email")
             password = request.POST.get("password")
+            print(password)
             # encrpt the password
+
             b = password.encode('utf-8')
             hashed_password = bcrypt.hashpw(
                 b, bcrypt.gensalt()).decode('utf-8')
@@ -104,25 +107,28 @@ def submit__signup_form(request):
 
 def login_form(request):
 
-    message = "Login here!"
-    form = Loginform()
+    message = ""
+    #form = Loginform()
     if request.method == 'POST':
-        form = Loginform(request.POST or None)
-        if not form.is_valid():
-            # print userform.errors
-            message = form.errors
-            return render(request, "login_page.html", {'form': form, 'message': message})
-        else:
-            # connect to database
+        # #form = Loginform(request.POST or None)
+        # if not form.is_valid():
+        #     # print userform.errors
+        #    # message = form.errors
+        #     #return render(request, "login_page.html", {'form': form, 'message': message})
+        
+          
+        # else:
+        #     # connect to database
             mydb = db.connect(host=dv['dbHost'],user=dv['dbUsername'],passwd=dv['dbPassword'], database=dv['dbName'])
                               
                       
             cursor = mydb.cursor()
 
-            # email = request.POST["email"]
-            # password = request.POST["password"]
-            email = form.cleaned_data.get("email")
-            password = form.cleaned_data.get("password")
+            email = request.POST["email"]
+            password = request.POST["password"]
+            # email = form.cleaned_data.get("email")
+            # password = form.cleaned_data.get("password")
+              
 
             sql = "SELECT firstname,email,password FROM users WHERE email = %s"
             print(f'email:', email)
@@ -142,14 +148,18 @@ def login_form(request):
                     return redirect("/task/")
 
                 else:
-                    message = "Invalid password!"
-                    return render(request, "login_page.html", {'form': form, 'message': message})
+                    message = "Invalid Secret Key!"
+                    #return render(request, "login_page.html", {'form': form, 'message': message})
+                    return render(request, "login_page.html", {'message': message})
             else:
-                message = "Invalid username!"
-                return render(request, "login_page.html", {'form': form, 'message': message})
+                message= "Invalid Star!"
+               # return render(request, "login_page.html", {'form': form, 'message': message})
+                return render(request, "login_page.html", {'message': message})
 
-    else:
-        return render(request, "login_page.html", {'form': form, 'message': message})
+    #else:
+        #return render(request, "login_page.html", {'form': form, 'message': message})
+    return render(request, "login_page.html", {'message': message})
+
 
 
 def taskform(request):
@@ -192,7 +202,7 @@ def taskform(request):
 def updateform(request):
 
     pass
-
+######## VIEW tasks  - COMPLETED or INCOMPLETED 
 
 def viewtask(request):
     if 'email' in request.session:
@@ -226,8 +236,24 @@ def viewtask(request):
     else:
         for result in result:
             dt = result[2].strftime('%a %d,%Y')
+
+            # 15 days added to date on > goal set date to check if the time is left today for task
+             #  and display a message appropirately
+          
+            timeLeft = result[2] + timedelta(days=15)
+            timeover = datetime.now()
+            print('timeleft:' ,timeLeft,'timeover:',timeover )
+            if  result[3] == 1:
+                 message =  '<img src="{% \/static "img\/bl.jpg" %}">'
+                # message = "Great Job!"
+            elif result[3] == 0:
+                if timeLeft >= timeover:
+                    message = "15days left from goal set!"
+                else:
+                      message = "Alert! Take Action"
+            
             onetask = {'task': result[1], 'dt': dt,
-                       'status': result[3], 'taskid': result[4]}
+                       'status': result[3], 'taskid': result[4],'message':message}
 
             data.append(onetask)
 

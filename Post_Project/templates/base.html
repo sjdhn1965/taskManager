@@ -24,12 +24,27 @@
 
 <body>
 
-    <nav class="navbar bg-warning">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#"><p>Hello </p>{{request.session.firstname}}</a>
-        </div>
-    </nav>
+    
 
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <!-- Brand/logo -->
+        <a class="navbar-brand" href="#">
+            <img width="40px" height="40px" class="mx-3" src="{% static 'img/bl.jpg' %}" alt="logo">
+        </a>
+        
+        <!-- Links -->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Hello {{request.session.firstname}}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"></a>
+          </li>
+        </ul>
+      </nav>
 
   
 
@@ -37,7 +52,7 @@
 
 
         
-    <div class="bg-secondary container-fluid ">
+    <div class="bg-dark container-fluid m-0">
             <form method="post" action="{% url 'taskform' %}" name="taskform" id="movetask">
                 {%csrf_token%}
 
@@ -46,14 +61,14 @@
                     
 
                         <input type="text" name="task1" class="input-text form-control border-1 border-dark bg-light"
-                            placeholder="enter your task.." aria-label="task1" aria-describedby="basic-addon1"
+                            placeholder="Fill Your Bucket.." aria-label="task1" aria-describedby="basic-addon1"
                             maxlength="50" pattern="([^\s][A-zÀ-ž\s]+)" title="Letters & space only" required>
                   
 
-                    <div class="btn-group" role="group">
+                    <div class="btn-group d-flex align-items-center justify-content-center mt-2" role="group">
 
                         <button type="submit" class="btn btn-danger btn-sm" name="AddTask">
-                            Add</button>
+                            To bucket</button>
 
                         <button type="submit" class="btn btn-info  btn-sm" value="0" id="pending">
                             ToDo</button>
@@ -64,7 +79,7 @@
                             Done
                         </button>
                         <button type="submit" class="btn btn-warning btn-sm" value="1" id="logout">
-                            Logout
+                            END
                         </button>
 
                       
@@ -74,22 +89,23 @@
         </div>
          
             
-              <div class="card-body container d-flex align-items-center justify-content-center"  id="myDiv">
+              <div class="card-body container mt-5 d-flex align-items-center justify-content-center"  id="myDiv">
 
                 <div class="card" style="width: 18rem;">
-                    <img class="card-img-top" src="{% static 'img/th.jpg' %}"" alt="Card image cap">
+                    <img class="card-img-top" src="{% static 'img/th.jpg' %}" alt="Card image cap">
                     <div class="card-body">
-                      <p class="card-text">Take a first Step. &#8986; JUST DO IT!</p>
+                      <p class="card-text  text-dange">Take a first Step. &#8986;JUST DO IT!</p>
                     </div>
                   </div>
 
               </div>
-
               {% block message %}
 
-              <p>&#169; Copyright, Adamb</p>
+              <p class="m-3 text-danger ">&copy; Copyright Adamb</p>
               
               {% endblock %}
+
+             
            
 
             

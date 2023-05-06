@@ -64,15 +64,18 @@
         ////// Display data in html page div tag Pending or completed tasks
         function display_data(response) {
             var rese = JSON.parse(JSON.stringify(response));
-
+            var message = "";
             sta = rese.context[0].status
-
+        
+                
             if (sta == 0) {
                 var checkbox = "<input type='checkbox' id='checkbox2'>"
+               
             }
             else {
 
                 var checkbox = "<input type='checkbox' id='checkbox1' checked>"
+                message= "<img src={% static 'img\/bl.jpg' %}>"
             }
 
 
@@ -81,7 +84,8 @@
                             <tr>
                               <th>Status</th>
                               <th>Bucket List</th>
-                              <th>Date created</th>
+                              <th>Goal Set</th>
+                              <th></th>
                               
                               
                             </tr>`;
@@ -91,7 +95,9 @@
                            <td>${checkbox}</td>
                            <td>${rese.context[i].task}</td>
                            <td>${rese.context[i].dt}</td>
+                           <td>${message}</td>
                            <input type=hidden id=taskid value=${rese.context[i].taskid}>
+                          
                          </tr>`;
 
             }
