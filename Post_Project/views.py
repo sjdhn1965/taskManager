@@ -1,9 +1,13 @@
+import sys
+sys.path
+
+
 from django.http import HttpResponse
 import requests
 import bcrypt
 from .values import dbvalues
 
-
+from django.contrib import messages
 from django.shortcuts import render
 from Post_Project.forms import Loginform
 from django.shortcuts import render, redirect
@@ -15,7 +19,7 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.contrib.auth import logout as auth_logout
 
-global user, firstname
+global user, firstname, accomplished_message
 dv = dbvalues.setValues()
 print('dv ',dv)
 
@@ -35,19 +39,21 @@ def getcookies(request):
 
 
 def taskpage(request):
+
     
     # print("Session of {}".format(request.session['user']))
     return render(request, "taskdisplay.html", {"user": "Welcome " + request.session["email"]})
 
 
 def submit__signup_form(request):
-    message = "Sign up here!"
+    messages.info(request, "Sign up here!")
     if request.method == 'POST':
         # connect to database
         
         
         mydb = db.connect(host=dv['dbHost'],user=dv['dbUsername'],
                       passwd=dv['dbPassword'], database=dv['dbName'],port=dv['dbPort'])
+        print(mydb)
         cursor = mydb.cursor()
 
         email = request.POST.get("email")
@@ -64,8 +70,8 @@ def submit__signup_form(request):
         print(result)
 
         if result:
-            message = "Star already registered!"
-            return render(request, "signup_page.html", {'message': message})
+            messages.info(request, "Acheiver already registered!")
+            return render(request, "signup_page.html")
 
         else:
 
@@ -85,7 +91,7 @@ def submit__signup_form(request):
             datecreated = datetime.now()
 
             sql = ("INSERT INTO users"
-                   "(firstname,email,password,datetcreated) "
+                   "(firstname,email,password,datecreated) "
                    "VALUES (%s,%s,%s,%s)")
             table1 = 'users'
             data = (firstname, email, hashed_password, datecreated)
@@ -99,7 +105,6 @@ def submit__signup_form(request):
             request.session['firstname'] = firstname
             user =  request.session["firstname"]
             request.session['email'] = email
-
             return render(request, "taskdisplay.html")
 
     return render(request, "signup_page.html")
@@ -107,7 +112,7 @@ def submit__signup_form(request):
 
 def login_form(request):
 
-    message = ""
+   
     #form = Loginform()
     if request.method == 'POST':
         # #form = Loginform(request.POST or None)
@@ -148,17 +153,17 @@ def login_form(request):
                     return redirect("/task/")
 
                 else:
-                    message = "Invalid Secret Key!"
+                    messages.warning(request, "Invalid Secret Key!")
                     #return render(request, "login_page.html", {'form': form, 'message': message})
-                    return render(request, "login_page.html", {'message': message})
+                    return render(request, "login_page.html")
             else:
-                message= "Invalid Star!"
+                messages.warning(request, "Acheiver email is Invalid!")
                # return render(request, "login_page.html", {'form': form, 'message': message})
-                return render(request, "login_page.html", {'message': message})
+                return render(request, "login_page.html")
 
     #else:
         #return render(request, "login_page.html", {'form': form, 'message': message})
-    return render(request, "login_page.html", {'message': message})
+    return render(request, "login_page.html")
 
 
 
@@ -186,17 +191,17 @@ def taskform(request):
         
         cursor = mydb.cursor()
         sql = ("INSERT INTO task"
-               "(email,task,datecreated,status1) "
+               "(email,task,datecreated,status) "
                "VALUES (%s,%s,%s,%s)")
         table1 = 'task'
-        Insertdata = (email, task, dt, False)
+        Insertdata = (email, task, dt, 0)
 
         cursor.execute(sql, Insertdata)
         mydb.commit()
         mydb.close()
         return redirect('/task/')
     else:
-        return render(request, "taskdisplay.html")
+        return render(request, "base.html")
 
 
 def updateform(request):
@@ -211,7 +216,7 @@ def viewtask(request):
         return redirect("/login/")
 
     data = []
-
+    
     email = request.session["email"]
     print("email", email)
 
@@ -227,7 +232,7 @@ def viewtask(request):
    
     mydb = db.connect(host=dv['dbHost'],user=dv['dbUsername'],
                       passwd=dv['dbPassword'], database=dv['dbName'])
-    sql = ("SELECT email,task,datecreated,status1,taskid FROM task where email=%s AND status1 =%s")
+    sql = ("SELECT email,task,datecreated,status,id FROM task where email=%s AND status =%s")
     cursor = mydb.cursor()
     cursor.execute(sql, (email, status))
     result = cursor.fetchall()
@@ -235,37 +240,51 @@ def viewtask(request):
         pass
     else:
         for result in result:
-            dt = result[2].strftime('%a %d,%Y')
+            dt = result[2]
+            print(dt)
+            date_format = '%Y-%m-%d %H:%M:%S.%f'
+  # Format of the input date string
+            # date_format = '%d/%m/%Y'    # Desired output format
 
-            # 15 days added to date on > goal set date to check if the time is left today for task
-             #  and display a message appropirately
-          
-            timeLeft = result[2] + timedelta(days=15)
-            timeover = datetime.now()
-            print('timeleft:' ,timeLeft,'timeover:',timeover )
-            if  result[3] == 1:
-                 message =  '<img src="{% \/static "img\/bl.jpg" %}">'
-                # message = "Great Job!"
-            elif result[3] == 0:
-                if timeLeft >= timeover:
-                    message = "15days left from goal set!"
-                else:
-                      message = "Alert! Take Action"
+            parsed_date = datetime.strptime(result[2], date_format)
+            # formatted_date = parsed_date.strftime(output_format)
             
-            onetask = {'task': result[1], 'dt': dt,
-                       'status': result[3], 'taskid': result[4],'message':message}
+            # Output: '15/02/2010'
+            # dt = result[2].strptime('%a %d,%Y')
 
+            # # 15 days added to date on > goal set date to check if the time is left today for task
+            #  #  and display a message appropirately
+            formatted_date = parsed_date.strftime('%b-%d-%Y') 
+            print(formatted_date)
+            deadlinedate = parsed_date + timedelta(days=3)
+            print('timeleft ' ,deadlinedate)
+               
+            todaysdate = datetime.now()
+            # print('timeleft:' ,timeLeft,'timeover:',timeover )
+            if  result[3] == 1:
+                                    
+             accomplished_message = "Great Job!"
+            elif result[3] == 0:
+             if deadlinedate < todaysdate:
+                accomplished_message = "Alert! Deadline Passed - Take Action"
+             else:
+                 accomplished_message = "task pending - Take Action soon"
+            
+            onetask = {'task': result[1], 'dt': formatted_date,
+                       'status': result[3], 'taskid': result[4], 'task_message': accomplished_message}
+            
+           
             data.append(onetask)
 
     mydb.close
 
     context = {'context': data}
-    #print('context:',context)
-    html = render_to_string("viewdata.html", context=context,request=request)
+    print('context:',context)
+    #html = render_to_string("viewdata.html", context=context,request=request)
     
    
     
-    print(JsonResponse(context))
+    
      
     return JsonResponse(context)
     
@@ -288,7 +307,7 @@ def movetask(request):
     print(taskid)
     print(type(taskid))
 
-    sql = "UPDATE task SET status1 = %s where taskid = %s"
+    sql = "UPDATE task SET status = %s where id = %s"
     deldata = (status, taskid)
     print('deldata', deldata)
      
@@ -317,10 +336,7 @@ def logout(request):
 
  
  
-def viewd(request):
-    return redirect('view.html')
 
-   
     
 
    

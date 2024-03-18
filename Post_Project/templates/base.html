@@ -24,12 +24,12 @@
 
 <body>
 
-    
+    <!-- Nav bar  -->
 
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
         <!-- Brand/logo -->
         <a class="navbar-brand" href="#">
-            <img width="40px" height="40px" class="mx-3" src="{% static 'img/bl.jpg' %}" alt="logo">
+            <img class="mx-3 logo" src="{% static 'img/bl.jpg' %}" alt="logo">
         </a>
         
         <!-- Links -->
@@ -37,12 +37,7 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Hello {{request.session.firstname}}</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"></a>
-          </li>
+         
         </ul>
       </nav>
 
@@ -50,7 +45,7 @@
 
 
 
-
+<!--  tasks data entry -->
         
     <div class="bg-dark container-fluid m-0">
             <form method="post" action="{% url 'taskform' %}" name="taskform" id="movetask">
@@ -61,33 +56,37 @@
                     
 
                         <input type="text" name="task1" class="input-text form-control border-1 border-dark bg-light"
-                            placeholder="Fill Your Bucket.." aria-label="task1" aria-describedby="basic-addon1"
+                            placeholder="write Your task.." aria-label="task1" aria-describedby="basic-addon1"
                             maxlength="50" pattern="([^\s][A-zÀ-ž\s]+)" title="Letters & space only" required>
                   
 
-                    <div class="btn-group d-flex align-items-center justify-content-center mt-2" role="group">
+                    <div class="btn-group d-flex align-items-center justify-content-center mt-3" role="group">
 
-                        <button type="submit" class="btn btn-danger btn-sm" name="AddTask">
-                            To bucket</button>
+                        <button type="submit" class="btn btn-danger btn-sm btn-block " name="AddTask">
+                            fill your Bucket</button>
 
-                        <button type="submit" class="btn btn-info  btn-sm" value="0" id="pending">
-                            ToDo</button>
+                        <button type="submit" class="btn btn-info  btn-sm btn-block" value="0" id="pending">
+                            toDo</button>
 
                         <input type="hidden" name="pending" value="Pending">
 
-                        <button type="submit" class="btn btn-success btn-sm" value="1" id="complist">
-                            Done
+                        <button type="submit" class="btn btn-success btn-sm btn-block " value="1" id="complist">
+                            accomplished
                         </button>
-                        <button type="submit" class="btn btn-warning btn-sm" value="1" id="logout">
-                            END
+                        <button type="submit" class="btn btn-warning btn-sm btn-block" value="1" id="logout">
+                            I want to get out!
                         </button>
 
                       
                     </div>
               
             </form>
+
+
+          
         </div>
          
+          <!--  tasks display both completed and incompleted   -->
             
               <div class="card-body container mt-5 d-flex align-items-center justify-content-center"  id="myDiv">
 
@@ -99,11 +98,13 @@
                   </div>
 
               </div>
-              {% block message %}
+
+ <!--   footer message  -->
+              {% block footer %}
 
               <p class="m-3 text-danger ">&copy; Copyright Adamb</p>
               
-              {% endblock %}
+              {% endblock footer %}
 
              
            

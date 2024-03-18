@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,23 +12,15 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <title>Document</title>
-  <style>
-    body {
-      width: 100%;
-
-    }
-
-    .sp {
-      color: crimson
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
+  <script src="{% static 'js/jscript.js' %}"></script>
+  <title>Sign Up</title>
+  
 
 </head>
 
 <body>
-
-
+  
 
    
     <section class="h-50  h-custom" style="background-color: #8fc4b7;">
@@ -44,17 +37,27 @@
 
                 <form  class="px-md-2" method="post" action="{% url 'submitform' %}" name="submitform">
                   {%csrf_token %}
-
-                  <div class="form-outline mb-4">
-                    <span class="sp">{{message}}</span>
-                    <input type="text" id="firstname" name=" name = "firstname" class="form-control" required/>
-                    <label class="form-label" for="firstname">Your Name</label>
+                  <div>
+                  
+                    {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                   </div>
 
+                  <div class="form-outline mb-1 mt-3">
+                    
+                    <input type="text" id="firstname"  name = "firstname" class="form-control" required/>
+                    <label class="form-label" for="firstname">Your Name</label>
+                  </div>
+                  
                   <div class="row">
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-6 mb-1">
 
-                      <div class="form-outline datepicker">
+                      <div class="form-outline">
                        
                         <input type="email" class="form-control" name = "email" id="email" required/>
                         <label for="Email" class="form-label">Your email</label>
@@ -65,7 +68,7 @@
 
                   </div>
                   
-                  <div class="row mb-4 pb-2 pb-md-0 mb-md-5">
+                  <div class="row mb-1">
                     <div class="col-md-6">
                       <div class="form-outline">
                         <input type="password" id="password" name="password" class="form-control" required/>
@@ -75,7 +78,7 @@
                       <span><a href="/login/">Registered? Get in here</a></span>
                     </div>
                   </div>
-                  <button type="submit" class="btn btn-success btn-lg mb-1">FIRST STEP</button>
+                  <button type="submit" class="btn btn-success btn-lg mb-1"> VERY FIRST STEP</button>
                 </form>
 
               </div>

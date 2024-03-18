@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,58 +12,14 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/> 
+ 
+  
+  <div w3-include-html="link.html"></div>
   <title>Login</title>
-
-  <style>
-    .main {
-      margin-top: 30px;
-      margin-left: 10px;
-      border: 1px;
-      border-color: blue;
-    }
-
-    span {
-      color: crimson;
-    }
-  </style>
-
-
 </head>
 
-<body>
-  <!-- <nav class="navbar navbar-light bg-warning">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">
-            <!-- <img src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="30" height="24" class="d-inline-block align-text-top"> -->
-
-  <!-- </a> -->
-  <!-- </div>
-      </nav>
-    
-    <div class="input-group mb-3 w-25 main">
-    <form method="post" name="login" action="{% url 'login' %}">
-        
-        {% csrf_token %}
-        <table class="table-bordered table-light text-bg-secondary opacity-10">
-        
-        {% for field in form %}
-        <tr>
-        
-           
-        <td>{{field.label_tag}}</td><td>{{ field }}</td>
-    </tr>
-       
-    {% endfor %}
-</table>
-    <button type="submit" class="btn btn-xs btn-success m-1" id="login">Login</button>
-
-    </form>
-    <div>
-        <a href="/submitform/" class="link-danger">Create Account here!</a></div>
-</div> -->
-  <!-- {{task}}  -->
-
-
+  
 
   <section class="h-50  h-custom" style="background-color: #8fc4b7;">
 
@@ -73,18 +30,27 @@
             <img src="{% static 'img/todo-list.webp' %}" class="w-100"
               style="border-top-left-radius: .3rem; border-top-right-radius: .3rem;" alt="Sample photo">
             <!-- "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/img3.webp" -->
-
+            
             <div class="card-body p-4 p-md-5">
               <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 px-md-2">Get In to Set your Goals</h3>
+               
+              {% if messages %}
+              <ul class="messages">
+                  {% for message in messages %}
+                  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                  {% endfor %}
+              </ul>
+              {% endif %}
 
               <form class="px-md-2" method="post" name="login" action="{% url 'login' %}">
                 {%csrf_token %}
-
-
-                <div class="row">
+                
+                
+                <div class="row mt-3">
                   <div class="col-md-6 mb-4">
                     
-                    <div class="form-outline datepicker">
+    
+                    <div class="form-outline">
 
                       <input type="email" class="form-control" name="email" id="email" required />
                       <label for="Email" class="form-label">Your email</label>
@@ -97,6 +63,7 @@
                 </div>
 
                 <div class="row mb-4 pb-2 pb-md-0 mb-md-5">
+                  
                   <div class="col-md-6">
                     <div class="form-outline">
                       <input type="password" id="password" name="password" class="form-control" required />
@@ -104,7 +71,7 @@
                     
 
                     </div>
-                    <p><span>{{message}}</span></p>
+                    
                   </div>
                  
                   <span><a href="/submitform/">Register here</a></span>
